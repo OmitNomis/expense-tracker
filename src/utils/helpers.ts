@@ -49,9 +49,8 @@ export function getCustomMonthRange(
   }
 
   if (isNaN(endDate.getTime())) {
-    // If end date is invalid, use the last day of the next month
-    endDate.setDate(1); // Set to first day of next month
-    endDate.setMonth(month + 1); // Ensure next month
+    endDate.setDate(1);
+    endDate.setMonth(month + 1);
     const lastDay = new Date(year, month + 2, 0).getDate();
     endDate.setDate(Math.min(startDay - 1, lastDay));
   }

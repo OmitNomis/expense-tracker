@@ -56,7 +56,9 @@ export default function MonthlyView() {
           <div className="relative">
             <button
               onClick={() => {
-                const calendarInput = document.getElementById("month-calendar");
+                const calendarInput = document.getElementById(
+                  "month-calendar"
+                ) as HTMLInputElement;
                 if (calendarInput) calendarInput.showPicker();
               }}
               className="flex gap-2 items-center p-2 font-bold bg-white border-4 border-black transition-colors hover:bg-gray-50">
