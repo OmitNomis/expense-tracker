@@ -42,6 +42,17 @@ export default function App() {
     }
   }, [loggedInUser, userSettings, initializeSettings]);
 
+  // Listen for navigation events from empty states
+  useEffect(() => {
+    const handleNavigate = (event: CustomEvent) => {
+      setCurrentView(event.detail as View);
+      setSidebarOpen(false);
+    };
+
+    window.addEventListener('navigate', handleNavigate as EventListener);
+    return () => window.removeEventListener('navigate', handleNavigate as EventListener);
+  }, []);
+
   if (loggedInUser === undefined) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-cream">
@@ -67,15 +78,11 @@ export default function App() {
                   💰 EXPENSE TRACKER
                 </h1>
               </div>
-              <div className="flex items-center gap-2 sm:gap-4">
-                <button
-                  onClick={() => setShowAddExpense(true)}
-                  className="bg-yellow border-4 border-black px-2 sm:px-4 py-2 font-bold text-black hover:bg-yellow-dark transition-colors shadow-brutal-sm text-sm sm:text-base">
-                  <span className="hidden sm:inline">+ ADD EXPENSE</span>
-                  <span className="sm:hidden">+</span>
-                </button>
-                <SignOutButton />
-              </div>
+              <button
+                onClick={() => setShowAddExpense(true)}
+                className="bg-yellow border-4 border-black w-12 h-12 font-bold text-black hover:bg-yellow-dark transition-colors shadow-brutal-sm flex items-center justify-center text-xl">
+                +
+              </button>
             </div>
           </header>
 
@@ -96,7 +103,7 @@ export default function App() {
               w-64 bg-white border-r-4 border-black p-4 h-full
               transition-transform duration-300 ease-in-out
             `}>
-              <div className="space-y-2">
+              <div className="space-y-2 flex flex-col h-full">
                 <NavButton
                   active={currentView === "dashboard"}
                   onClick={() => {
@@ -147,6 +154,9 @@ export default function App() {
                     👑 ADMIN
                   </NavButton>
                 )}
+                <div className="mt-auto pt-4">
+                  <SignOutButton />
+                </div>
               </div>
             </nav>
 
