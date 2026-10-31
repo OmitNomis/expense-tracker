@@ -5,6 +5,7 @@ import { toast } from "sonner";
 
 const CURRENCIES = [
   { code: "JPY", symbol: "¥", name: "Japanese Yen" },
+  { code: "NPR", symbol: "Rs.", name: "Nepali Rupee" },
   { code: "USD", symbol: "$", name: "US Dollar" },
   { code: "EUR", symbol: "€", name: "Euro" },
   { code: "GBP", symbol: "£", name: "British Pound" },
@@ -15,12 +16,11 @@ const CURRENCIES = [
 export default function Settings() {
   const userSettings = useQuery(api.settings.getUserSettings);
   const updateSettings = useMutation(api.settings.updateUserSettings);
-  
+
   const [currency, setCurrency] = useState("");
   const [monthStartDay, setMonthStartDay] = useState(25);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Initialize form when settings load
   useEffect(() => {
     if (userSettings) {
       setCurrency(userSettings.currency);
@@ -46,7 +46,7 @@ export default function Settings() {
   if (!userSettings) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-yellow border-t-transparent"></div>
+        <div className="w-12 h-12 rounded-full border-4 animate-spin border-yellow border-t-transparent"></div>
       </div>
     );
   }
@@ -54,22 +54,22 @@ export default function Settings() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white border-4 border-black p-6 shadow-brutal">
+      <div className="p-6 bg-white border-4 border-black shadow-brutal">
         <h2 className="text-3xl font-black text-black">⚙️ SETTINGS</h2>
       </div>
 
-      {/* Currency Settings */}
-      <div className="bg-white border-4 border-black p-6 shadow-brutal">
-        <h3 className="text-xl font-black text-black mb-4">💱 CURRENCY</h3>
-        
+      <div className="p-6 bg-white border-4 border-black shadow-brutal">
+        <h3 className="mb-4 text-xl font-black text-black">💱 CURRENCY</h3>
+
         <div className="space-y-4">
           <div>
-            <label className="block font-bold text-black mb-2">Default Currency</label>
+            <label className="block mb-2 font-bold text-black">
+              Default Currency
+            </label>
             <select
               value={currency}
               onChange={(e) => setCurrency(e.target.value)}
-              className="w-full border-4 border-black p-3 font-bold bg-white"
-            >
+              className="p-3 w-full font-bold bg-white border-4 border-black">
               {CURRENCIES.map((curr) => (
                 <option key={curr.code} value={curr.code}>
                   {curr.symbol} {curr.code} - {curr.name}
@@ -81,35 +81,40 @@ export default function Settings() {
       </div>
 
       {/* Month Period Settings */}
-      <div className="bg-white border-4 border-black p-6 shadow-brutal">
-        <h3 className="text-xl font-black text-black mb-4">📅 MONTH PERIOD</h3>
-        
+      <div className="p-6 bg-white border-4 border-black shadow-brutal">
+        <h3 className="mb-4 text-xl font-black text-black">📅 MONTH PERIOD</h3>
+
         <div className="space-y-4">
           <div>
-            <label className="block font-bold text-black mb-2">Month Start Day</label>
+            <label className="block mb-2 font-bold text-black">
+              Month Start Day
+            </label>
             <select
               value={monthStartDay}
               onChange={(e) => setMonthStartDay(Number(e.target.value))}
-              className="w-full border-4 border-black p-3 font-bold bg-white"
-            >
+              className="p-3 w-full font-bold bg-white border-4 border-black">
               {Array.from({ length: 28 }, (_, i) => i + 1).map((day) => (
                 <option key={day} value={day}>
                   {day}
                 </option>
               ))}
             </select>
-            <p className="text-sm font-bold text-gray-600 mt-2">
-              Your custom month runs from the {monthStartDay}th of one month to the {monthStartDay - 1}th of the next month.
+            <p className="mt-2 text-sm font-bold text-gray-600">
+              Your custom month runs from the {monthStartDay}th of one month to
+              the {monthStartDay - 1}th of the next month.
             </p>
           </div>
         </div>
       </div>
 
       {/* PWA Info */}
-      <div className="bg-yellow border-4 border-black p-6 shadow-brutal">
-        <h3 className="text-xl font-black text-black mb-4">📱 PWA (PROGRESSIVE WEB APP)</h3>
-        <p className="font-bold text-black mb-4">
-          This app works as a PWA! You can install it on your device for a native app experience.
+      <div className="p-6 border-4 border-black bg-yellow shadow-brutal">
+        <h3 className="mb-4 text-xl font-black text-black">
+          📱 PWA (PROGRESSIVE WEB APP)
+        </h3>
+        <p className="mb-4 font-bold text-black">
+          This app works as a PWA! You can install it on your device for a
+          native app experience.
         </p>
         <div className="space-y-2 text-sm font-bold text-black">
           <p>• On mobile: Tap "Add to Home Screen" in your browser menu</p>
@@ -123,8 +128,7 @@ export default function Settings() {
         <button
           onClick={handleSave}
           disabled={isLoading}
-          className="bg-yellow border-4 border-black px-8 py-3 font-black text-black hover:bg-yellow-dark transition-colors shadow-brutal disabled:opacity-50"
-        >
+          className="px-8 py-3 font-black text-black border-4 border-black transition-colors bg-yellow hover:bg-yellow-dark shadow-brutal disabled:opacity-50">
           {isLoading ? "SAVING..." : "💾 SAVE SETTINGS"}
         </button>
       </div>
