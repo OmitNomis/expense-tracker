@@ -25,7 +25,45 @@ export default function PeriodView() {
     effectivePeriodId ? { periodId: effectivePeriodId as any } : "skip"
   );
 
-  if (!userSettings || !periods || !analytics) {
+  if (!userSettings || !periods) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="w-12 h-12 rounded-full border-4 animate-spin border-yellow border-t-transparent"></div>
+      </div>
+    );
+  }
+
+  // Show empty state if no periods exist
+  if (periods.length === 0) {
+    return (
+      <div className="space-y-6">
+        <div className="p-6 bg-white border-4 border-black shadow-brutal">
+          <h2 className="mb-4 text-3xl font-black text-black">📅 PERIOD VIEW</h2>
+        </div>
+        
+        <div className="p-8 bg-white border-4 border-black shadow-brutal text-center">
+          <div className="mb-6">
+            <div className="text-6xl mb-4">📅</div>
+            <h3 className="text-2xl font-black text-black mb-2">NO PERIODS FOUND</h3>
+            <p className="text-lg font-bold text-gray-600 mb-6">
+              Create your first period to start tracking expenses by time periods.
+            </p>
+            <button
+               onClick={() => {
+                 const event = new CustomEvent('navigate', { detail: 'period-manager' });
+                 window.dispatchEvent(event);
+               }}
+               className="bg-yellow border-4 border-black px-6 py-3 font-bold text-black hover:bg-yellow-dark transition-colors shadow-brutal-sm text-lg"
+             >
+               CREATE YOUR FIRST PERIOD
+             </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!analytics) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="w-12 h-12 rounded-full border-4 animate-spin border-yellow border-t-transparent"></div>

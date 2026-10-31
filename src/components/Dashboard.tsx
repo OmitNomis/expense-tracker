@@ -13,7 +13,46 @@ export default function Dashboard() {
     currentPeriod ? { periodId: currentPeriod._id } : "skip"
   );
 
-  if (!userSettings || !analytics || !currentPeriod) {
+  if (!userSettings) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="w-12 h-12 rounded-full border-4 animate-spin border-yellow border-t-transparent"></div>
+      </div>
+    );
+  }
+
+  if (!currentPeriod) {
+    return (
+      <div className="space-y-6">
+        <div className="p-4 bg-white border-4 border-black sm:p-6 shadow-brutal">
+          <h2 className="mb-4 text-2xl font-black text-black sm:text-3xl">
+            📊 DASHBOARD
+          </h2>
+        </div>
+        
+        <div className="p-8 bg-white border-4 border-black shadow-brutal text-center">
+          <div className="mb-6">
+            <div className="text-6xl mb-4">📅</div>
+            <h3 className="text-2xl font-black text-black mb-2">NO ACTIVE PERIOD</h3>
+            <p className="text-lg font-bold text-gray-600 mb-6">
+              You need to create a period to start tracking your expenses.
+            </p>
+            <button
+               onClick={() => {
+                 const event = new CustomEvent('navigate', { detail: 'period-manager' });
+                 window.dispatchEvent(event);
+               }}
+               className="bg-yellow border-4 border-black px-6 py-3 font-bold text-black hover:bg-yellow-dark transition-colors shadow-brutal-sm text-lg"
+             >
+               CREATE YOUR FIRST PERIOD
+             </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!analytics) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="w-12 h-12 rounded-full border-4 animate-spin border-yellow border-t-transparent"></div>
@@ -55,7 +94,7 @@ export default function Dashboard() {
           <h3 className="mb-4 text-lg font-black text-black sm:text-xl">
             📈 DAILY SPENDING
           </h3>
-          <div className="overflow-x-auto h-full">
+          <div className="px-4 pb-6 -mx-4 h-full sm:-mx-6 sm:px-6">
             <BarChart
               data={analytics.dailySpending}
               currency={userSettings.currency}
