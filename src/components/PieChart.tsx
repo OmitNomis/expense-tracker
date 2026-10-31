@@ -28,7 +28,7 @@ export default function PieChart({ data, currency }: PieChartProps) {
   }
 
   const total = data.reduce((sum, item) => sum + item.amount, 0);
-  
+
   // Handle single category case
   if (data.length === 1) {
     return (
@@ -45,7 +45,7 @@ export default function PieChart({ data, currency }: PieChartProps) {
             />
           </svg>
         </div>
-        
+
         {/* Legend */}
         <div className="mt-4 space-y-2 w-full">
           <div className="flex items-center justify-between">
@@ -54,15 +54,15 @@ export default function PieChart({ data, currency }: PieChartProps) {
                 className="w-4 h-4 border-2 border-black"
                 style={{ backgroundColor: COLORS[0] }}
               />
-              <span className="font-bold text-black text-sm">{data[0].category}</span>
+              <span className="font-bold text-black text-sm">
+                {data[0].category}
+              </span>
             </div>
             <div className="text-right">
               <div className="font-black text-black text-sm">
                 {formatCurrency(data[0].amount, currency)}
               </div>
-              <div className="text-xs font-bold text-gray-600">
-                100.0%
-              </div>
+              <div className="text-xs font-bold text-gray-600">100.0%</div>
             </div>
           </div>
         </div>
@@ -81,29 +81,29 @@ export default function PieChart({ data, currency }: PieChartProps) {
         <svg width="240" height="240" className="border-4 border-black">
           {data.map((item, index) => {
             const angle = (item.amount / total) * 360;
-            
+
             const startAngle = currentAngle;
             const endAngle = currentAngle + angle;
-            
+
             const startAngleRad = (startAngle * Math.PI) / 180;
             const endAngleRad = (endAngle * Math.PI) / 180;
-            
+
             const x1 = centerX + radius * Math.cos(startAngleRad);
             const y1 = centerY + radius * Math.sin(startAngleRad);
             const x2 = centerX + radius * Math.cos(endAngleRad);
             const y2 = centerY + radius * Math.sin(endAngleRad);
-            
+
             const largeArcFlag = angle > 180 ? 1 : 0;
-            
+
             const pathData = [
               `M ${centerX} ${centerY}`,
               `L ${x1} ${y1}`,
               `A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2}`,
-              'Z'
-            ].join(' ');
-            
+              "Z",
+            ].join(" ");
+
             currentAngle += angle;
-            
+
             return (
               <path
                 key={item.category}
@@ -117,19 +117,23 @@ export default function PieChart({ data, currency }: PieChartProps) {
           })}
         </svg>
       </div>
-      
+
       {/* Legend */}
       <div className="mt-4 space-y-2 w-full">
         {data.map((item, index) => {
           const percentage = ((item.amount / total) * 100).toFixed(1);
           return (
-            <div key={item.category} className="flex items-center justify-between">
+            <div
+              key={item.category}
+              className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div
                   className="w-4 h-4 border-2 border-black"
                   style={{ backgroundColor: COLORS[index % COLORS.length] }}
                 />
-                <span className="font-bold text-black text-sm">{item.category}</span>
+                <span className="font-bold text-black text-sm">
+                  {item.category}
+                </span>
               </div>
               <div className="text-right">
                 <div className="font-black text-black text-sm">
