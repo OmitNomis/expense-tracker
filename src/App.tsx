@@ -16,6 +16,7 @@ import Settings from "./components/Settings";
 import AdminPortal from "./components/AdminPortal";
 import AddExpenseModal from "./components/AddExpenseModal";
 import PeriodManager from "./components/PeriodManager";
+import SignoutModal from "./components/SignoutModal";
 
 type View =
   | "dashboard"
@@ -30,6 +31,8 @@ export default function App() {
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [showAddExpense, setShowAddExpense] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [signOutModalVisible, setSignOutModalVisible] =
+    useState<boolean>(false);
 
   const loggedInUser = useQuery(api.auth.loggedInUser);
   const userSettings = useQuery(api.settings.getUserSettings);
@@ -49,14 +52,15 @@ export default function App() {
       setSidebarOpen(false);
     };
 
-    window.addEventListener('navigate', handleNavigate as EventListener);
-    return () => window.removeEventListener('navigate', handleNavigate as EventListener);
+    window.addEventListener("navigate", handleNavigate as EventListener);
+    return () =>
+      window.removeEventListener("navigate", handleNavigate as EventListener);
   }, []);
 
   if (loggedInUser === undefined) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-cream">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-yellow border-t-transparent"></div>
+      <div className="flex justify-center items-center min-h-screen bg-cream">
+        <div className="w-12 h-12 rounded-full border-4 animate-spin border-yellow border-t-transparent"></div>
       </div>
     );
   }
@@ -66,31 +70,31 @@ export default function App() {
       <Authenticated>
         <div className="flex flex-col h-screen">
           {/* Header */}
-          <header className="bg-white border-4 border-black shadow-brutal p-4">
+          <header className="p-4 bg-white border-4 border-black shadow-brutal">
             <div className="flex justify-between items-center">
-              <div className="flex items-center gap-4">
+              <div className="flex gap-4 items-center">
                 <button
                   onClick={() => setSidebarOpen(!sidebarOpen)}
-                  className="lg:hidden bg-yellow border-2 border-black px-3 py-2 font-bold text-black hover:bg-yellow-dark transition-colors">
+                  className="px-3 py-2 font-bold text-black border-2 border-black transition-colors lg:hidden bg-yellow hover:bg-yellow-dark">
                   ☰
                 </button>
-                <h1 className="text-lg sm:text-2xl font-black text-black">
+                <h1 className="text-lg font-black text-black sm:text-2xl">
                   💰 EXPENSE TRACKER
                 </h1>
               </div>
               <button
                 onClick={() => setShowAddExpense(true)}
-                className="bg-yellow border-4 border-black w-12 h-12 font-bold text-black hover:bg-yellow-dark transition-colors shadow-brutal-sm flex items-center justify-center text-xl">
+                className="flex justify-center items-center w-12 h-12 text-xl font-bold text-black border-4 border-black transition-colors bg-yellow hover:bg-yellow-dark shadow-brutal-sm">
                 +
               </button>
             </div>
           </header>
 
-          <div className="flex flex-1 overflow-hidden relative">
+          <div className="flex overflow-hidden relative flex-1">
             {/* Mobile Sidebar Overlay */}
             {sidebarOpen && (
               <div
-                className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+                className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"
                 onClick={() => setSidebarOpen(false)}
               />
             )}
@@ -103,7 +107,7 @@ export default function App() {
               w-64 bg-white border-r-4 border-black p-4 h-full
               transition-transform duration-300 ease-in-out
             `}>
-              <div className="space-y-2 flex flex-col h-full">
+              <div className="flex flex-col space-y-2 h-full">
                 <NavButton
                   active={currentView === "dashboard"}
                   onClick={() => {
@@ -154,14 +158,18 @@ export default function App() {
                     👑 ADMIN
                   </NavButton>
                 )}
-                <div className="mt-auto pt-4">
-                  <SignOutButton />
+                <div className="pt-4 mt-auto">
+                  <button
+                    className="px-4 py-2 w-full text-sm font-bold text-black bg-white border-4 border-black transition-colors hover:bg-gray-100 shadow-brutal-sm sm:text-base"
+                    onClick={() => setSignOutModalVisible(true)}>
+                    🚪 SIGN OUT
+                  </button>
                 </div>
               </div>
             </nav>
 
             {/* Main Content */}
-            <main className="flex-1 overflow-auto p-4 sm:p-6">
+            <main className="overflow-auto flex-1 p-4 sm:p-6">
               {currentView === "dashboard" && <Dashboard />}
               {currentView === "periods" && <PeriodView />}
               {currentView === "period-manager" && <PeriodManager />}
@@ -183,16 +191,19 @@ export default function App() {
         {showAddExpense && (
           <AddExpenseModal onClose={() => setShowAddExpense(false)} />
         )}
+        {signOutModalVisible && (
+          <SignoutModal onClose={() => setSignOutModalVisible(false)} />
+        )}
       </Authenticated>
 
       <Unauthenticated>
-        <div className="min-h-screen flex items-center justify-center p-4 sm:p-8">
+        <div className="flex justify-center items-center p-4 min-h-screen sm:p-8">
           <div className="w-full max-w-md">
-            <div className="text-center mb-8">
-              <h1 className="text-2xl sm:text-4xl font-black text-black mb-4">
+            <div className="mb-8 text-center">
+              <h1 className="mb-4 text-2xl font-black text-black sm:text-4xl">
                 💰 EXPENSE TRACKER
               </h1>
-              <p className="text-lg sm:text-xl font-bold text-gray-700">
+              <p className="text-lg font-bold text-gray-700 sm:text-xl">
                 Track your spending like a boss!
               </p>
             </div>
@@ -220,8 +231,8 @@ function NavButton({
       onClick={onClick}
       className={`w-full text-left p-3 font-bold border-4 border-black transition-colors shadow-brutal-sm text-sm sm:text-base ${
         active
-          ? "bg-yellow text-black"
-          : "bg-white text-black hover:bg-gray-100"
+          ? "text-black bg-yellow"
+          : "text-black bg-white hover:bg-gray-100"
       }`}>
       {children}
     </button>
