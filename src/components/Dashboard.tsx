@@ -29,23 +29,26 @@ export default function Dashboard() {
             📊 DASHBOARD
           </h2>
         </div>
-        
-        <div className="p-8 bg-white border-4 border-black shadow-brutal text-center">
+
+        <div className="p-8 text-center bg-white border-4 border-black shadow-brutal">
           <div className="mb-6">
-            <div className="text-6xl mb-4">📅</div>
-            <h3 className="text-2xl font-black text-black mb-2">NO ACTIVE PERIOD</h3>
-            <p className="text-lg font-bold text-gray-600 mb-6">
+            <div className="mb-4 text-6xl">📅</div>
+            <h3 className="mb-2 text-2xl font-black text-black">
+              NO ACTIVE PERIOD
+            </h3>
+            <p className="mb-6 text-lg font-bold text-gray-600">
               You need to create a period to start tracking your expenses.
             </p>
             <button
-               onClick={() => {
-                 const event = new CustomEvent('navigate', { detail: 'period-manager' });
-                 window.dispatchEvent(event);
-               }}
-               className="bg-yellow border-4 border-black px-6 py-3 font-bold text-black hover:bg-yellow-dark transition-colors shadow-brutal-sm text-lg"
-             >
-               CREATE YOUR FIRST PERIOD
-             </button>
+              onClick={() => {
+                const event = new CustomEvent("navigate", {
+                  detail: "period-manager",
+                });
+                window.dispatchEvent(event);
+              }}
+              className="px-6 py-3 text-lg font-bold text-black border-4 border-black transition-colors bg-yellow hover:bg-yellow-dark shadow-brutal-sm">
+              CREATE A PERIOD
+            </button>
           </div>
         </div>
       </div>
