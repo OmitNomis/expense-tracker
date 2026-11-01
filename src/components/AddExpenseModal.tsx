@@ -146,7 +146,7 @@ export default function AddExpenseModal({ onClose }: AddExpenseModalProps) {
             </button>
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || !currentPeriod}
               className="flex-1 px-4 py-3 text-base font-bold text-black border-4 border-black transition-colors bg-yellow hover:bg-yellow-dark disabled:opacity-50">
               {isLoading ? "ADDING..." : "ADD EXPENSE"}
             </button>
