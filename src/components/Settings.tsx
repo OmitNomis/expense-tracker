@@ -5,7 +5,7 @@ import { toast } from "sonner";
 
 const CURRENCIES = [
   { code: "JPY", symbol: "¥", name: "Japanese Yen" },
-  { code: "NPR", symbol: "Rs.", name: "Nepali Rupee" },
+  { code: "NPR", symbol: "रु", name: "Nepali Rupee" },
   { code: "USD", symbol: "$", name: "US Dollar" },
   { code: "EUR", symbol: "€", name: "Euro" },
   { code: "GBP", symbol: "£", name: "British Pound" },
@@ -81,7 +81,7 @@ export default function Settings() {
       </div>
 
       {/* Month Period Settings */}
-      <div className="p-6 bg-white border-4 border-black shadow-brutal">
+      {/* <div className="p-6 bg-white border-4 border-black shadow-brutal">
         <h3 className="mb-4 text-xl font-black text-black">📅 MONTH PERIOD</h3>
 
         <div className="space-y-4">
@@ -105,7 +105,7 @@ export default function Settings() {
             </p>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* PWA Info */}
       <div className="p-6 border-4 border-black bg-yellow shadow-brutal">

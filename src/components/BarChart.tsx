@@ -3,12 +3,13 @@ import { formatCurrency } from "../utils/helpers";
 interface BarChartProps {
   data: Array<{ date: string; amount: number }>;
   currency: string;
+  onDateClick?: (date: string) => void;
 }
 
-export default function BarChart({ data, currency }: BarChartProps) {
+export default function BarChart({ data, currency, onDateClick }: BarChartProps) {
   if (data.length === 0) {
     return (
-      <div className="h-64 flex items-center justify-center">
+      <div className="flex justify-center items-center h-64">
         <p className="font-bold text-gray-600">No data to display</p>
       </div>
     );
@@ -19,14 +20,14 @@ export default function BarChart({ data, currency }: BarChartProps) {
   return (
     <div className="relative">
       {/* Grid lines */}
-      <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
+      <div className="flex absolute inset-0 flex-col justify-between pointer-events-none">
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="border-t border-gray-200 w-full" />
+          <div key={i} className="w-full border-t border-gray-200" />
         ))}
       </div>
 
       {/* Y-axis labels */}
-      <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs font-bold text-gray-600 pr-2">
+      <div className="flex absolute top-0 left-0 flex-col justify-between pr-2 h-full text-xs font-bold text-gray-600">
         {[...Array(5)].map((_, i) => {
           const value = (maxAmount * (4 - i)) / 4;
           return (
@@ -53,13 +54,14 @@ export default function BarChart({ data, currency }: BarChartProps) {
                   item.amount > 0 ? "bg-yellow" : "bg-gray-200"
                 }`}
                 style={{ height: `${height}px` }}
+                onClick={() => onDateClick && onDateClick(item.date)}
               />
-              <div className="text-xs font-bold text-black mt-2 transform -rotate-45 origin-left whitespace-nowrap">
+              <div className="mt-2 text-xs font-bold text-black whitespace-nowrap transform origin-left -rotate-45">
                 {date.getDate()}
               </div>
 
               {/* Tooltip */}
-              <div className="absolute bottom-full mb-2 hidden group-hover:block bg-black text-white p-2 rounded text-xs font-bold whitespace-nowrap z-10">
+              <div className="hidden absolute bottom-full z-10 p-2 mb-2 text-xs font-bold text-white whitespace-nowrap bg-black rounded group-hover:block">
                 {date.toLocaleDateString()}
                 <br />
                 {formatCurrency(item.amount, currency)}

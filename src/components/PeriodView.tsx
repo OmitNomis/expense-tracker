@@ -9,15 +9,40 @@ export default function PeriodView() {
   const userSettings = useQuery(api.settings.getUserSettings);
   const periods = useQuery(api.periods.getUserPeriods);
   const [selectedPeriodId, setSelectedPeriodId] = useState<string>("");
+  
+  const handleDateClick = (date: string) => {
+    // Navigate to daily view with the selected date
+    const navigateEvent = new CustomEvent('navigate', { detail: 'daily' });
+    window.dispatchEvent(navigateEvent);
+    
+    // Set the selected date in App.tsx
+    const dateSelectEvent = new CustomEvent('dateSelect', { detail: date });
+    window.dispatchEvent(dateSelectEvent);
+  };
 
   // Get current period if no period is selected
   const currentPeriod = useQuery(api.periods.getCurrentPeriod);
 
-  // Use the current period if no period is selected
+  // Use the current period if no period is selected, or the most recent period if no current period
   const effectivePeriodId = useMemo(() => {
+    // If user has explicitly selected a period, use that
     if (selectedPeriodId) return selectedPeriodId;
-    return currentPeriod?._id || "";
-  }, [selectedPeriodId, currentPeriod]);
+    
+    // If there's a current period, use that
+    if (currentPeriod?._id) return currentPeriod._id;
+    
+    // If there are periods but no current period, use the most recent one
+    if (periods && periods.length > 0) {
+      // Sort periods by start date in descending order (newest first)
+      const sortedPeriods = [...periods].sort((a, b) => 
+        new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+      );
+      return sortedPeriods[0]._id;
+    }
+    
+    // Fallback to empty string if no periods exist
+    return "";
+  }, [selectedPeriodId, currentPeriod, periods]);
 
   // Get analytics for the selected period
   const analytics = useQuery(
@@ -73,8 +98,8 @@ export default function PeriodView() {
 
   // Find the selected period object
   const selectedPeriod = effectivePeriodId
-    ? periods.find((p) => p._id === effectivePeriodId) || currentPeriod
-    : currentPeriod;
+    ? periods.find((p) => p._id === effectivePeriodId)
+    : null;
 
   return (
     <div className="space-y-6">
@@ -87,7 +112,7 @@ export default function PeriodView() {
             value={selectedPeriodId}
             onChange={(e) => setSelectedPeriodId(e.target.value)}
             className="p-2 font-bold bg-white border-4 border-black transition-colors hover:bg-gray-50">
-            <option value="">Current Period</option>
+            <option value="">{currentPeriod ? "Current Period" : "Most Recent Period"}</option>
             {periods.map((period) => (
               <option key={period._id} value={period._id}>
                 {period.name} {period.isClosed ? "(Closed)" : ""}
@@ -111,7 +136,9 @@ export default function PeriodView() {
         <h3 className="mb-2 text-xl font-black text-black">
           {selectedPeriod
             ? selectedPeriod.name.toUpperCase()
-            : "CURRENT PERIOD"}{" "}
+            : currentPeriod 
+              ? "CURRENT PERIOD" 
+              : "MOST RECENT PERIOD"}{" "}
           TOTAL
         </h3>
         <p className="text-4xl font-black text-black">
@@ -128,6 +155,7 @@ export default function PeriodView() {
             <BarChart
               data={analytics.dailySpending}
               currency={userSettings.currency}
+              onDateClick={handleDateClick}
             />
           </div>
         </div>
@@ -164,7 +192,8 @@ export default function PeriodView() {
                 .map((day) => (
                   <div
                     key={day.date}
-                    className="p-4 transition-colors hover:bg-gray-50">
+                    className="p-4 transition-colors hover:bg-gray-50 cursor-pointer"
+                    onClick={() => handleDateClick(day.date)}>
                     <div className="flex justify-between items-center">
                       <div>
                         <p className="font-black text-black">

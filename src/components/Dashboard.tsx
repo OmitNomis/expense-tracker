@@ -3,10 +3,21 @@ import { api } from "../../convex/_generated/api";
 import { formatCurrency, formatDate } from "../utils/helpers";
 import BarChart from "./BarChart";
 import PieChart from "./PieChart";
+import { useState } from "react";
 
 export default function Dashboard() {
   const userSettings = useQuery(api.settings.getUserSettings);
   const currentPeriod = useQuery(api.periods.getCurrentPeriod);
+  
+  const handleDateClick = (date: string) => {
+    // Navigate to daily view with the selected date
+    const navigateEvent = new CustomEvent('navigate', { detail: 'daily' });
+    window.dispatchEvent(navigateEvent);
+    
+    // Set the selected date in App.tsx
+    const dateSelectEvent = new CustomEvent('dateSelect', { detail: date });
+    window.dispatchEvent(dateSelectEvent);
+  };
 
   const analytics = useQuery(
     api.expenses.getSpendingAnalytics,
@@ -101,6 +112,7 @@ export default function Dashboard() {
             <BarChart
               data={analytics.dailySpending}
               currency={userSettings.currency}
+              onDateClick={handleDateClick}
             />
           </div>
         </div>

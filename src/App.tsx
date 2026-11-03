@@ -51,10 +51,18 @@ export default function App() {
       setCurrentView(event.detail as View);
       setSidebarOpen(false);
     };
+    
+    const handleDateSelect = (event: CustomEvent) => {
+      setSelectedDate(event.detail as string);
+    };
 
-    window.addEventListener("navigate", handleNavigate as EventListener);
-    return () =>
-      window.removeEventListener("navigate", handleNavigate as EventListener);
+    window.addEventListener('navigate', handleNavigate as EventListener);
+    window.addEventListener('dateSelect', handleDateSelect as EventListener);
+    
+    return () => {
+      window.removeEventListener('navigate', handleNavigate as EventListener);
+      window.removeEventListener('dateSelect', handleDateSelect as EventListener);
+    };
   }, []);
 
   if (loggedInUser === undefined) {
