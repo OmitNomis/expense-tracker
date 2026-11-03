@@ -1,7 +1,8 @@
 export function formatCurrency(amount: number, currency: string): string {
   const currencyMap: Record<string, { symbol: string; decimals: number }> = {
     JPY: { symbol: "¥", decimals: 0 },
-    USD: { symbol: "$", decimals: 2 },
+    USD: { symbol: "$", decimals: 0 },
+    NPR: { symbol: "रु", decimals: 0 },
     EUR: { symbol: "€", decimals: 2 },
     GBP: { symbol: "£", decimals: 2 },
     CNY: { symbol: "¥", decimals: 2 },
