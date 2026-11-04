@@ -134,3 +134,104 @@ export const closePeriod = mutation({
     return args.periodId;
   },
 });
+
+// Update period details (name, dates)
+export const updatePeriod = mutation({
+  args: {
+    periodId: v.id("periods"),
+    name: v.optional(v.string()),
+    startDate: v.optional(v.string()),
+    endDate: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+
+    const period = await ctx.db.get(args.periodId);
+    if (!period || period.userId !== userId) {
+      throw new Error("Period not found or unauthorized");
+    }
+
+    const updates: any = {};
+    if (args.name !== undefined) updates.name = args.name;
+    if (args.startDate !== undefined) updates.startDate = args.startDate;
+    if (args.endDate !== undefined) {
+      updates.endDate = args.endDate;
+      // If setting an end date, mark as closed
+      if (args.endDate && !period.isClosed) {
+        updates.isClosed = true;
+      }
+      // If removing end date, mark as open
+      if (!args.endDate && period.isClosed) {
+        updates.isClosed = false;
+      }
+    }
+
+    await ctx.db.patch(args.periodId, updates);
+    return args.periodId;
+  },
+});
+
+// Reopen a closed period
+export const reopenPeriod = mutation({
+  args: {
+    periodId: v.id("periods"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+
+    const period = await ctx.db.get(args.periodId);
+    if (!period || period.userId !== userId) {
+      throw new Error("Period not found or unauthorized");
+    }
+
+    await ctx.db.patch(args.periodId, {
+      isClosed: false,
+      endDate: "",
+    });
+
+    return args.periodId;
+  },
+});
+
+// Delete a period
+export const deletePeriod = mutation({
+  args: {
+    periodId: v.id("periods"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+
+    const period = await ctx.db.get(args.periodId);
+    if (!period || period.userId !== userId) {
+      throw new Error("Period not found or unauthorized");
+    }
+
+    // Remove period reference from user settings if it's the current period
+    const userSettings = await ctx.db
+      .query("userSettings")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .unique();
+
+    if (userSettings && userSettings.currentPeriodId === args.periodId) {
+      await ctx.db.patch(userSettings._id, { currentPeriodId: undefined });
+    }
+
+    // Update all expenses in this period to have no period
+    const expenses = await ctx.db
+      .query("expenses")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .filter((q) => q.eq(q.field("periodId"), args.periodId))
+      .collect();
+
+    for (const expense of expenses) {
+      await ctx.db.patch(expense._id, { periodId: undefined });
+    }
+
+    // Delete the period
+    await ctx.db.delete(args.periodId);
+    return args.periodId;
+  },
+});

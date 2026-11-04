@@ -127,13 +127,7 @@ export const updateExpense = mutation({
       throw new Error("Expense not found or unauthorized");
     }
 
-    // Check if the expense's period is closed
-    if (expense.periodId) {
-      const period = await ctx.db.get(expense.periodId);
-      if (period && period.isClosed) {
-        throw new Error("Cannot update an expense in a closed period");
-      }
-    }
+    // Periods are flexible - allow editing expenses in any period
 
     return await ctx.db.patch(args.id, {
       amount: args.amount,
@@ -157,13 +151,7 @@ export const deleteExpense = mutation({
       throw new Error("Expense not found or unauthorized");
     }
 
-    // Check if the expense's period is closed
-    if (expense.periodId) {
-      const period = await ctx.db.get(expense.periodId);
-      if (period && period.isClosed) {
-        throw new Error("Cannot delete an expense in a closed period");
-      }
-    }
+    // Periods are flexible - allow deleting expenses in any period
 
     return await ctx.db.delete(args.id);
   },
