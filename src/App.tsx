@@ -78,21 +78,21 @@ export default function App() {
       <Authenticated>
         <div className="flex flex-col h-screen">
           {/* Header */}
-          <header className="p-4 bg-white border-4 border-black shadow-brutal">
+          <header className="p-4 bg-white border-4 border-black shadow-brutal safe-area-inset-top">
             <div className="flex justify-between items-center">
-              <div className="flex gap-4 items-center">
+              <div className="flex gap-2 sm:gap-4 items-center">
                 <button
                   onClick={() => setSidebarOpen(!sidebarOpen)}
-                  className="px-3 py-2 font-bold text-black border-2 border-black transition-colors lg:hidden bg-yellow hover:bg-yellow-dark">
+                  className="px-3 py-2 font-bold text-black border-2 border-black transition-colors lg:hidden bg-yellow hover:bg-yellow-dark touch-manipulation">
                   ☰
                 </button>
-                <h1 className="text-lg font-black text-black sm:text-2xl">
+                <h1 className="text-base font-black text-black sm:text-lg md:text-2xl truncate">
                   💰 EXPENSE TRACKER
                 </h1>
               </div>
               <button
                 onClick={() => setShowAddExpense(true)}
-                className="flex justify-center items-center w-12 h-12 text-xl font-bold text-black border-4 border-black transition-colors bg-yellow hover:bg-yellow-dark shadow-brutal-sm">
+                className="flex justify-center items-center w-12 h-12 text-xl font-bold text-black border-4 border-black transition-colors bg-yellow hover:bg-yellow-dark shadow-brutal-sm touch-manipulation flex-shrink-0">
                 +
               </button>
             </div>
@@ -114,6 +114,7 @@ export default function App() {
               lg:translate-x-0 fixed lg:relative z-50 lg:z-auto
               w-64 bg-white border-r-4 border-black p-4 h-full
               transition-transform duration-300 ease-in-out
+              safe-area-inset-left safe-area-inset-bottom
             `}>
               <div className="flex flex-col space-y-2 h-full">
                 <NavButton
@@ -168,7 +169,7 @@ export default function App() {
                 )}
                 <div className="pt-4 mt-auto">
                   <button
-                    className="px-4 py-2 w-full text-sm font-bold text-black bg-white border-4 border-black transition-colors hover:bg-gray-100 shadow-brutal-sm sm:text-base"
+                    className="px-4 py-2 w-full text-sm font-bold text-black bg-white border-4 border-black transition-colors hover:bg-gray-100 shadow-brutal-sm sm:text-base touch-manipulation"
                     onClick={() => setSignOutModalVisible(true)}>
                     🚪 SIGN OUT
                   </button>
@@ -177,7 +178,7 @@ export default function App() {
             </nav>
 
             {/* Main Content */}
-            <main className="overflow-auto flex-1 p-4 sm:p-6">
+            <main className="overflow-auto flex-1 p-4 sm:p-6 safe-area-inset-right safe-area-inset-bottom">
               {currentView === "dashboard" && <Dashboard />}
               {currentView === "periods" && <PeriodView />}
               {currentView === "period-manager" && <PeriodManager />}

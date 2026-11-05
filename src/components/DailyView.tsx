@@ -81,7 +81,6 @@ export default function DailyView({
         </h3>
         <p className="text-2xl font-black text-black sm:text-4xl">
           {formatCurrency(totalForDay, userSettings.currency)}
-          {console.log(userSettings.currency)}
         </p>
       </div>
 

@@ -93,7 +93,25 @@ body {
   background: var(--color-yellow-dark);
 }
 
-/* Responsive design improvements */
+/* iOS PWA and responsive design improvements */
+@supports (padding: max(0px)) {
+  .safe-area-inset-top {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+  
+  .safe-area-inset-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+  
+  .safe-area-inset-left {
+    padding-left: max(1rem, env(safe-area-inset-left));
+  }
+  
+  .safe-area-inset-right {
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+}
+
 @media (max-width: 768px) {
   .shadow-brutal {
     box-shadow: 4px 4px 0px 0px #000000;
@@ -108,15 +126,34 @@ body {
     font-size: 16px;
   }
   
-  /* Better touch targets */
-  button, input, select {
+  /* Better touch targets for iOS */
+  button, input, select, textarea {
     min-height: 44px;
+    -webkit-appearance: none;
+    border-radius: 0;
   }
   
   /* Prevent horizontal scroll */
   body {
     overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
   }
+  
+  /* iOS specific optimizations */
+  * {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+  
+  /* Improve scrolling performance */
+  .overflow-y-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Touch manipulation for better iOS performance */
+.touch-manipulation {
+  touch-action: manipulation;
 }
 
 /* Ensure proper text sizing on all devices */

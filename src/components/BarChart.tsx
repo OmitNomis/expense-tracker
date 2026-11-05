@@ -6,7 +6,11 @@ interface BarChartProps {
   onDateClick?: (date: string) => void;
 }
 
-export default function BarChart({ data, currency, onDateClick }: BarChartProps) {
+export default function BarChart({
+  data,
+  currency,
+  onDateClick,
+}: BarChartProps) {
   if (data.length === 0) {
     return (
       <div className="flex justify-center items-center h-64">
