@@ -51,17 +51,20 @@ export default function App() {
       setCurrentView(event.detail as View);
       setSidebarOpen(false);
     };
-    
+
     const handleDateSelect = (event: CustomEvent) => {
       setSelectedDate(event.detail as string);
     };
 
-    window.addEventListener('navigate', handleNavigate as EventListener);
-    window.addEventListener('dateSelect', handleDateSelect as EventListener);
-    
+    window.addEventListener("navigate", handleNavigate as EventListener);
+    window.addEventListener("dateSelect", handleDateSelect as EventListener);
+
     return () => {
-      window.removeEventListener('navigate', handleNavigate as EventListener);
-      window.removeEventListener('dateSelect', handleDateSelect as EventListener);
+      window.removeEventListener("navigate", handleNavigate as EventListener);
+      window.removeEventListener(
+        "dateSelect",
+        handleDateSelect as EventListener
+      );
     };
   }, []);
 
@@ -80,19 +83,19 @@ export default function App() {
           {/* Header */}
           <header className="p-4 bg-white border-4 border-black shadow-brutal safe-area-inset-top">
             <div className="flex justify-between items-center">
-              <div className="flex gap-2 sm:gap-4 items-center">
+              <div className="flex gap-2 items-center sm:gap-4">
                 <button
                   onClick={() => setSidebarOpen(!sidebarOpen)}
                   className="px-3 py-2 font-bold text-black border-2 border-black transition-colors lg:hidden bg-yellow hover:bg-yellow-dark touch-manipulation">
                   ☰
                 </button>
-                <h1 className="text-base font-black text-black sm:text-lg md:text-2xl truncate">
+                <h1 className="text-base font-black text-black truncate sm:text-lg md:text-2xl">
                   💰 EXPENSE TRACKER
                 </h1>
               </div>
               <button
                 onClick={() => setShowAddExpense(true)}
-                className="flex justify-center items-center w-12 h-12 text-xl font-bold text-black border-4 border-black transition-colors bg-yellow hover:bg-yellow-dark shadow-brutal-sm touch-manipulation flex-shrink-0">
+                className="flex flex-shrink-0 justify-center items-center w-12 h-12 text-xl font-bold text-black border-4 border-black transition-colors bg-yellow hover:bg-yellow-dark shadow-brutal-sm touch-manipulation">
                 +
               </button>
             </div>

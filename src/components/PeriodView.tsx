@@ -9,14 +9,14 @@ export default function PeriodView() {
   const userSettings = useQuery(api.settings.getUserSettings);
   const periods = useQuery(api.periods.getUserPeriods);
   const [selectedPeriodId, setSelectedPeriodId] = useState<string>("");
-  
+
   const handleDateClick = (date: string) => {
     // Navigate to daily view with the selected date
-    const navigateEvent = new CustomEvent('navigate', { detail: 'daily' });
+    const navigateEvent = new CustomEvent("navigate", { detail: "daily" });
     window.dispatchEvent(navigateEvent);
-    
+
     // Set the selected date in App.tsx
-    const dateSelectEvent = new CustomEvent('dateSelect', { detail: date });
+    const dateSelectEvent = new CustomEvent("dateSelect", { detail: date });
     window.dispatchEvent(dateSelectEvent);
   };
 
@@ -27,19 +27,20 @@ export default function PeriodView() {
   const effectivePeriodId = useMemo(() => {
     // If user has explicitly selected a period, use that
     if (selectedPeriodId) return selectedPeriodId;
-    
+
     // If there's a current period, use that
     if (currentPeriod?._id) return currentPeriod._id;
-    
+
     // If there are periods but no current period, use the most recent one
     if (periods && periods.length > 0) {
       // Sort periods by start date in descending order (newest first)
-      const sortedPeriods = [...periods].sort((a, b) => 
-        new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+      const sortedPeriods = [...periods].sort(
+        (a, b) =>
+          new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
       );
       return sortedPeriods[0]._id;
     }
-    
+
     // Fallback to empty string if no periods exist
     return "";
   }, [selectedPeriodId, currentPeriod, periods]);
@@ -63,25 +64,31 @@ export default function PeriodView() {
     return (
       <div className="space-y-6">
         <div className="p-6 bg-white border-4 border-black shadow-brutal">
-          <h2 className="mb-4 text-3xl font-black text-black">📅 PERIOD VIEW</h2>
+          <h2 className="mb-4 text-3xl font-black text-black">
+            📅 PERIOD VIEW
+          </h2>
         </div>
-        
-        <div className="p-8 bg-white border-4 border-black shadow-brutal text-center">
+
+        <div className="p-8 text-center bg-white border-4 border-black shadow-brutal">
           <div className="mb-6">
-            <div className="text-6xl mb-4">📅</div>
-            <h3 className="text-2xl font-black text-black mb-2">NO PERIODS FOUND</h3>
-            <p className="text-lg font-bold text-gray-600 mb-6">
-              Create your first period to start tracking expenses by time periods.
+            <div className="mb-4 text-6xl">📅</div>
+            <h3 className="mb-2 text-2xl font-black text-black">
+              NO PERIODS FOUND
+            </h3>
+            <p className="mb-6 text-lg font-bold text-gray-600">
+              Create your first period to start tracking expenses by time
+              periods.
             </p>
             <button
-               onClick={() => {
-                 const event = new CustomEvent('navigate', { detail: 'period-manager' });
-                 window.dispatchEvent(event);
-               }}
-               className="bg-yellow border-4 border-black px-6 py-3 font-bold text-black hover:bg-yellow-dark transition-colors shadow-brutal-sm text-lg"
-             >
-               CREATE YOUR FIRST PERIOD
-             </button>
+              onClick={() => {
+                const event = new CustomEvent("navigate", {
+                  detail: "period-manager",
+                });
+                window.dispatchEvent(event);
+              }}
+              className="px-6 py-3 text-lg font-bold text-black border-4 border-black transition-colors bg-yellow hover:bg-yellow-dark shadow-brutal-sm">
+              CREATE YOUR FIRST PERIOD
+            </button>
           </div>
         </div>
       </div>
@@ -112,7 +119,9 @@ export default function PeriodView() {
             value={selectedPeriodId}
             onChange={(e) => setSelectedPeriodId(e.target.value)}
             className="p-2 font-bold bg-white border-4 border-black transition-colors hover:bg-gray-50">
-            <option value="">{currentPeriod ? "Current Period" : "Most Recent Period"}</option>
+            <option value="">
+              {currentPeriod ? "Current Period" : "Most Recent Period"}
+            </option>
             {periods.map((period) => (
               <option key={period._id} value={period._id}>
                 {period.name} {period.isClosed ? "(Closed)" : ""}
@@ -136,8 +145,8 @@ export default function PeriodView() {
         <h3 className="mb-2 text-xl font-black text-black">
           {selectedPeriod
             ? selectedPeriod.name.toUpperCase()
-            : currentPeriod 
-              ? "CURRENT PERIOD" 
+            : currentPeriod
+              ? "CURRENT PERIOD"
               : "MOST RECENT PERIOD"}{" "}
           TOTAL
         </h3>
@@ -192,7 +201,7 @@ export default function PeriodView() {
                 .map((day) => (
                   <div
                     key={day.date}
-                    className="p-4 transition-colors hover:bg-gray-50 cursor-pointer"
+                    className="p-4 transition-colors cursor-pointer hover:bg-gray-50"
                     onClick={() => handleDateClick(day.date)}>
                     <div className="flex justify-between items-center">
                       <div>

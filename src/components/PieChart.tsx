@@ -21,7 +21,7 @@ const COLORS = [
 export default function PieChart({ data, currency }: PieChartProps) {
   if (data.length === 0) {
     return (
-      <div className="h-64 flex items-center justify-center">
+      <div className="flex justify-center items-center h-64">
         <p className="font-bold text-gray-600">No data to display</p>
       </div>
     );
@@ -48,18 +48,18 @@ export default function PieChart({ data, currency }: PieChartProps) {
 
         {/* Legend */}
         <div className="mt-4 space-y-2 w-full">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
+          <div className="flex justify-between items-center">
+            <div className="flex gap-2 items-center">
               <div
                 className="w-4 h-4 border-2 border-black"
                 style={{ backgroundColor: COLORS[0] }}
               />
-              <span className="font-bold text-black text-sm">
+              <span className="text-sm font-bold text-black">
                 {data[0].category}
               </span>
             </div>
             <div className="text-right">
-              <div className="font-black text-black text-sm">
+              <div className="text-sm font-black text-black">
                 {formatCurrency(data[0].amount, currency)}
               </div>
               <div className="text-xs font-bold text-gray-600">100.0%</div>
@@ -111,7 +111,7 @@ export default function PieChart({ data, currency }: PieChartProps) {
                 fill={COLORS[index % COLORS.length]}
                 stroke="#000"
                 strokeWidth="2"
-                className="hover:opacity-80 cursor-pointer"
+                className="cursor-pointer hover:opacity-80"
               />
             );
           })}
@@ -125,18 +125,18 @@ export default function PieChart({ data, currency }: PieChartProps) {
           return (
             <div
               key={item.category}
-              className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
+              className="flex justify-between items-center">
+              <div className="flex gap-2 items-center">
                 <div
                   className="w-4 h-4 border-2 border-black"
                   style={{ backgroundColor: COLORS[index % COLORS.length] }}
                 />
-                <span className="font-bold text-black text-sm">
+                <span className="text-sm font-bold text-black">
                   {item.category}
                 </span>
               </div>
               <div className="text-right">
-                <div className="font-black text-black text-sm">
+                <div className="text-sm font-black text-black">
                   {formatCurrency(item.amount, currency)}
                 </div>
                 <div className="text-xs font-bold text-gray-600">

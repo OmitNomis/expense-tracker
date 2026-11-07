@@ -8,14 +8,14 @@ import { useState } from "react";
 export default function Dashboard() {
   const userSettings = useQuery(api.settings.getUserSettings);
   const currentPeriod = useQuery(api.periods.getCurrentPeriod);
-  
+
   const handleDateClick = (date: string) => {
     // Navigate to daily view with the selected date
-    const navigateEvent = new CustomEvent('navigate', { detail: 'daily' });
+    const navigateEvent = new CustomEvent("navigate", { detail: "daily" });
     window.dispatchEvent(navigateEvent);
-    
+
     // Set the selected date in App.tsx
-    const dateSelectEvent = new CustomEvent('dateSelect', { detail: date });
+    const dateSelectEvent = new CustomEvent("dateSelect", { detail: date });
     window.dispatchEvent(dateSelectEvent);
   };
 

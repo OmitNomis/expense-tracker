@@ -105,7 +105,11 @@ export default function PeriodManager() {
   };
 
   const handleDeletePeriod = async (periodId: string, periodName: string) => {
-    if (confirm(`Are you sure you want to delete the period "${periodName}"? This will remove the period association from all expenses but keep the expenses themselves.`)) {
+    if (
+      confirm(
+        `Are you sure you want to delete the period "${periodName}"? This will remove the period association from all expenses but keep the expenses themselves.`
+      )
+    ) {
       try {
         await deletePeriod({ periodId: periodId as any });
         toast.success("Period deleted successfully!");
@@ -145,12 +149,12 @@ export default function PeriodManager() {
             </p>
             <button
               onClick={() => handleClosePeriod(currentPeriod._id)}
-              className="mt-2 px-4 py-2 font-bold text-white bg-black border-2 border-black transition-colors hover:bg-gray-800">
+              className="px-4 py-2 mt-2 font-bold text-white bg-black border-2 border-black transition-colors hover:bg-gray-800">
               Close Period
             </button>
           </div>
         ) : (
-          <div className="p-4 mb-4 border-2 border-black bg-gray-100">
+          <div className="p-4 mb-4 bg-gray-100 border-2 border-black">
             <p className="font-bold">No active period. Start a new one!</p>
           </div>
         )}
@@ -170,7 +174,7 @@ export default function PeriodManager() {
                 value={newPeriodName}
                 onChange={(e) => setNewPeriodName(e.target.value)}
                 placeholder="e.g., January 2023"
-                className="w-full p-2 border-2 border-black"
+                className="p-2 w-full border-2 border-black"
                 required
               />
             </div>
@@ -180,7 +184,7 @@ export default function PeriodManager() {
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full p-2 border-2 border-black"
+                className="p-2 w-full border-2 border-black"
                 required
               />
             </div>
@@ -220,7 +224,7 @@ export default function PeriodManager() {
                 <div
                   key={period._id}
                   className={`p-4 transition-colors ${period.isClosed ? "" : "bg-yellow"}`}>
-                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+                  <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
                     <div className="flex-1">
                       <p className="font-black text-black">{period.name}</p>
                       <p className="text-sm font-bold text-gray-600">
@@ -250,7 +254,9 @@ export default function PeriodManager() {
                         </button>
                       )}
                       <button
-                        onClick={() => handleDeletePeriod(period._id, period.name)}
+                        onClick={() =>
+                          handleDeletePeriod(period._id, period.name)
+                        }
                         className="px-3 py-1 text-sm font-bold text-white bg-red-500 border-2 border-black transition-colors hover:bg-red-600 touch-manipulation">
                         🗑️ Delete
                       </button>
@@ -265,9 +271,9 @@ export default function PeriodManager() {
 
       {/* Close Period Modal */}
       {closingPeriodId && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white border-4 border-black shadow-brutal p-6 max-w-md w-full mx-4">
-            <h3 className="text-xl font-black mb-4">📅 CLOSE PERIOD</h3>
+        <div className="flex fixed inset-0 z-50 justify-center items-center bg-black bg-opacity-50">
+          <div className="p-6 mx-4 w-full max-w-md bg-white border-4 border-black shadow-brutal">
+            <h3 className="mb-4 text-xl font-black">📅 CLOSE PERIOD</h3>
             <p className="mb-4 text-gray-600">
               Choose the end date for this period. Expenses on this date will be
               included in the period.
@@ -278,7 +284,7 @@ export default function PeriodManager() {
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="w-full p-2 border-2 border-black"
+                className="p-2 w-full border-2 border-black"
                 required
               />
             </div>
@@ -300,8 +306,8 @@ export default function PeriodManager() {
 
       {/* Edit Period Modal */}
       {editingPeriod && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border-4 border-black shadow-brutal max-w-md w-full">
+        <div className="flex fixed inset-0 z-50 justify-center items-center p-4 bg-black bg-opacity-50">
+          <div className="w-full max-w-md bg-white border-4 border-black shadow-brutal">
             <div className="p-6 border-b-4 border-black">
               <h3 className="text-xl font-black">✏️ EDIT PERIOD</h3>
             </div>
@@ -312,7 +318,7 @@ export default function PeriodManager() {
                   type="text"
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
-                  className="w-full p-2 border-2 border-black font-bold"
+                  className="p-2 w-full font-bold border-2 border-black"
                   required
                 />
               </div>
@@ -322,21 +328,24 @@ export default function PeriodManager() {
                   type="date"
                   value={editStartDate}
                   onChange={(e) => setEditStartDate(e.target.value)}
-                  className="w-full p-2 border-2 border-black font-bold"
+                  className="p-2 w-full font-bold border-2 border-black"
                   required
                 />
               </div>
               <div>
-                <label className="block mb-1 font-bold">End Date (optional)</label>
+                <label className="block mb-1 font-bold">
+                  End Date (optional)
+                </label>
                 <input
                   type="date"
                   value={editEndDate}
                   onChange={(e) => setEditEndDate(e.target.value)}
-                  className="w-full p-2 border-2 border-black font-bold"
+                  className="p-2 w-full font-bold border-2 border-black"
                   placeholder="Leave empty to keep period open"
                 />
-                <p className="text-sm text-gray-600 mt-1">
-                  Leave empty to keep period open. Setting a date will close the period.
+                <p className="mt-1 text-sm text-gray-600">
+                  Leave empty to keep period open. Setting a date will close the
+                  period.
                 </p>
               </div>
               <div className="flex gap-2 pt-4">
