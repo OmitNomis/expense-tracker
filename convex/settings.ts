@@ -14,11 +14,13 @@ export const getUserSettings = query({
       .withIndex("by_user", (q) => q.eq("userId", userId))
       .unique();
 
-    return settings || {
-      currency: "JPY",
-      monthStartDay: 25,
-      isAdmin: false,
-    };
+    return (
+      settings || {
+        currency: "JPY",
+        monthStartDay: 25,
+        isAdmin: false,
+      }
+    );
   },
 });
 
