@@ -34,9 +34,18 @@ const applicationTables = {
     monthStartDay: v.number(), // 1-28, default 25
     isAdmin: v.optional(v.boolean()),
     currentPeriodId: v.optional(v.id("periods")), // Reference to the current active period
+    primaryColor: v.optional(v.string()), // Primary theme color
   })
     .index("by_user", ["userId"])
     .index("by_admin", ["isAdmin"]),
+    
+  userCategories: defineTable({
+    userId: v.id("users"),
+    name: v.string(),
+    color: v.string(),
+    createdAt: v.number(),
+  })
+    .index("by_user", ["userId"]),
 };
 
 export default defineSchema({
