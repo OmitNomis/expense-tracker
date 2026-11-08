@@ -1,11 +1,15 @@
 import { formatCurrency } from "../utils/helpers";
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
+import { useEffect, useState } from "react";
 
 interface PieChartProps {
   data: Array<{ category: string; amount: number }>;
   currency: string;
 }
 
-const COLORS = [
+// Default colors as fallback
+const DEFAULT_COLORS = [
   "#FFD600", // Yellow
   "#FF6B6B", // Red
   "#4ECDC4", // Teal
@@ -18,7 +22,35 @@ const COLORS = [
   "#BB8FCE", // Lavender
 ];
 
+interface CategoryWithColor {
+  name: string;
+  color: string;
+}
+
 export default function PieChart({ data, currency }: PieChartProps) {
+  const userSettings = useQuery(api.settings.getUserSettings);
+  const [categoryColors, setCategoryColors] = useState<Map<string, string>>(new Map());
+  
+  // Initialize category colors from user settings or defaults
+  useEffect(() => {
+    const colorMap = new Map<string, string>();
+    
+    if (userSettings?.categories && userSettings.categories.length > 0) {
+      // Use user's custom categories
+      userSettings.categories.forEach((cat: CategoryWithColor) => {
+        colorMap.set(cat.name, cat.color);
+      });
+    }
+    
+    // Set default colors for any categories not in user's custom list
+    data.forEach((item, index) => {
+      if (!colorMap.has(item.category)) {
+        colorMap.set(item.category, DEFAULT_COLORS[index % DEFAULT_COLORS.length]);
+      }
+    });
+    
+    setCategoryColors(colorMap);
+  }, [userSettings, data]);
   if (data.length === 0) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -31,6 +63,8 @@ export default function PieChart({ data, currency }: PieChartProps) {
 
   // Handle single category case
   if (data.length === 1) {
+    const categoryColor = categoryColors.get(data[0].category) || DEFAULT_COLORS[0];
+    
     return (
       <div className="flex flex-col items-center">
         <div className="relative">
@@ -39,7 +73,7 @@ export default function PieChart({ data, currency }: PieChartProps) {
               cx="120"
               cy="120"
               r="80"
-              fill={COLORS[0]}
+              fill={categoryColor}
               stroke="#000"
               strokeWidth="2"
             />
@@ -52,7 +86,7 @@ export default function PieChart({ data, currency }: PieChartProps) {
             <div className="flex gap-2 items-center">
               <div
                 className="w-4 h-4 border-2 border-black"
-                style={{ backgroundColor: COLORS[0] }}
+                style={{ backgroundColor: categoryColor }}
               />
               <span className="text-sm font-bold text-black">
                 {data[0].category}
@@ -103,12 +137,15 @@ export default function PieChart({ data, currency }: PieChartProps) {
             ].join(" ");
 
             currentAngle += angle;
+            
+            // Get color from user's custom categories or fall back to default
+            const categoryColor = categoryColors.get(item.category) || DEFAULT_COLORS[index % DEFAULT_COLORS.length];
 
             return (
               <path
                 key={item.category}
                 d={pathData}
-                fill={COLORS[index % COLORS.length]}
+                fill={categoryColor}
                 stroke="#000"
                 strokeWidth="2"
                 className="cursor-pointer hover:opacity-80"
@@ -129,7 +166,7 @@ export default function PieChart({ data, currency }: PieChartProps) {
               <div className="flex gap-2 items-center">
                 <div
                   className="w-4 h-4 border-2 border-black"
-                  style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                  style={{ backgroundColor: categoryColors.get(item.category) || DEFAULT_COLORS[index % DEFAULT_COLORS.length] }}
                 />
                 <span className="text-sm font-bold text-black">
                   {item.category}

@@ -1,19 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { toast } from "sonner";
 
-const CATEGORIES = [
-  "Food & Dining",
-  "Transportation",
-  "Shopping",
-  "Entertainment",
-  "Bills & Utilities",
-  "Healthcare",
-  "Education",
-  "Travel",
-  "Groceries",
-  "Other",
+// Default categories as fallback
+const DEFAULT_CATEGORIES = [
+  { name: "Food & Dining", color: "#FFD600" },
+  { name: "Transportation", color: "#FF6B6B" },
+  { name: "Shopping", color: "#4ECDC4" },
+  { name: "Entertainment", color: "#45B7D1" },
+  { name: "Bills & Utilities", color: "#96CEB4" },
+  { name: "Healthcare", color: "#FFEAA7" },
+  { name: "Education", color: "#DDA0DD" },
+  { name: "Travel", color: "#98D8C8" },
+  { name: "Groceries", color: "#F7DC6F" },
+  { name: "Other", color: "#BB8FCE" },
 ];
 
 interface AddExpenseModalProps {
@@ -22,13 +23,28 @@ interface AddExpenseModalProps {
 
 export default function AddExpenseModal({ onClose }: AddExpenseModalProps) {
   const [amount, setAmount] = useState("");
-  const [category, setCategory] = useState(CATEGORIES[0]);
+  const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [isLoading, setIsLoading] = useState(false);
+  const [categories, setCategories] = useState<Array<{name: string, color: string}>>([]);
 
   const addExpense = useMutation(api.expenses.addExpense);
   const currentPeriod = useQuery(api.periods.getCurrentPeriod);
+  const userSettings = useQuery(api.settings.getUserSettings);
+  
+  // Initialize categories from user settings or defaults
+  useEffect(() => {
+    if (userSettings) {
+      if (userSettings.categories && userSettings.categories.length > 0) {
+        setCategories(userSettings.categories);
+        setCategory(userSettings.categories[0].name);
+      } else {
+        setCategories(DEFAULT_CATEGORIES);
+        setCategory(DEFAULT_CATEGORIES[0].name);
+      }
+    }
+  }, [userSettings]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,9 +121,13 @@ export default function AddExpenseModal({ onClose }: AddExpenseModalProps) {
               onChange={(e) => setCategory(e.target.value)}
               className="p-3 w-full text-base font-bold bg-white border-4 border-black"
               required>
-              {CATEGORIES.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
+              {categories.map((cat) => (
+                <option 
+                  key={cat.name} 
+                  value={cat.name}
+                  style={{backgroundColor: cat.color, color: "#000"}}
+                >
+                  {cat.name}
                 </option>
               ))}
             </select>
