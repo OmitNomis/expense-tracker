@@ -8,6 +8,23 @@
   --color-yellow: #ffd600;
   --color-yellow-dark: #e6c200;
   --color-cream: #fffdf7;
+  
+  /* Neobrutalism color palette */
+  --color-neo-pink: #FF6B6B;
+  --color-neo-teal: #4ECDC4;
+  --color-neo-blue: #45B7D1;
+  --color-neo-green: #96CEB4;
+  --color-neo-purple: #9D65C9;
+  --color-neo-orange: #FF9A3C;
+  --color-neo-lime: #BFFF00;
+  --color-neo-coral: #FF8C94;
+  --color-neo-mint: #98D8C8;
+  --color-neo-lavender: #BB8FCE;
+  --color-neo-gold: #F7DC6F;
+  --color-neo-salmon: #FA8072;
+  --color-neo-sky: #87CEEB;
+  --color-neo-magenta: #FF00FF;
+  --color-neo-turquoise: #40E0D0;
 }
 
 .accent-text {

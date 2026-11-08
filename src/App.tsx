@@ -44,6 +44,37 @@ export default function App() {
       initializeSettings();
     }
   }, [loggedInUser, userSettings, initializeSettings]);
+  
+  // Apply user's primary color theme
+  useEffect(() => {
+    if (userSettings?.primaryColor) {
+      document.documentElement.style.setProperty('--color-yellow', userSettings.primaryColor);
+      
+      // Calculate a darker shade for hover states (10% darker)
+      const darkerShade = calculateDarkerShade(userSettings.primaryColor, 10);
+      document.documentElement.style.setProperty('--color-yellow-dark', darkerShade);
+    }
+  }, [userSettings?.primaryColor]);
+  
+  // Helper function to calculate a darker shade of a hex color
+  const calculateDarkerShade = (hexColor: string, percent: number): string => {
+    // Remove the # if present
+    hexColor = hexColor.replace('#', '');
+    
+    // Parse the hex values
+    const r = parseInt(hexColor.substring(0, 2), 16);
+    const g = parseInt(hexColor.substring(2, 4), 16);
+    const b = parseInt(hexColor.substring(4, 6), 16);
+    
+    // Calculate darker values
+    const factor = 1 - percent / 100;
+    const newR = Math.floor(r * factor);
+    const newG = Math.floor(g * factor);
+    const newB = Math.floor(b * factor);
+    
+    // Convert back to hex
+    return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
+  };
 
   // Listen for navigation events from empty states
   useEffect(() => {
