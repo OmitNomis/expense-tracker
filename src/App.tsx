@@ -9,6 +9,7 @@ import { SignInForm } from "./SignInForm";
 import { SignOutButton } from "./SignOutButton";
 import { Toaster } from "sonner";
 import { useState, useEffect } from "react";
+import { Routes, Route, useNavigate, useLocation, Link } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
 import PeriodView from "./components/PeriodView";
 import DailyView from "./components/DailyView";
@@ -18,21 +19,12 @@ import AddExpenseModal from "./components/AddExpenseModal";
 import PeriodManager from "./components/PeriodManager";
 import SignoutModal from "./components/SignoutModal";
 
-type View =
-  | "dashboard"
-  | "periods"
-  | "daily"
-  | "settings"
-  | "admin"
-  | "period-manager";
-
 export default function App() {
-  const [currentView, setCurrentView] = useState<View>("dashboard");
-  const [selectedDate, setSelectedDate] = useState<string>("");
   const [showAddExpense, setShowAddExpense] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [signOutModalVisible, setSignOutModalVisible] =
-    useState<boolean>(false);
+  const [signOutModalVisible, setSignOutModalVisible] = useState<boolean>(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const loggedInUser = useQuery(api.auth.loggedInUser);
   const userSettings = useQuery(api.settings.getUserSettings);
@@ -76,15 +68,17 @@ export default function App() {
     return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
   };
 
-  // Listen for navigation events from empty states
+  // Listen for navigation events from empty states (for backward compatibility)
   useEffect(() => {
     const handleNavigate = (event: CustomEvent) => {
-      setCurrentView(event.detail as View);
+      const view = event.detail as string;
+      navigate(`/${view}`);
       setSidebarOpen(false);
     };
 
     const handleDateSelect = (event: CustomEvent) => {
-      setSelectedDate(event.detail as string);
+      const date = event.detail as string;
+      navigate(`/daily?date=${date}`);
     };
 
     window.addEventListener("navigate", handleNavigate as EventListener);
@@ -92,12 +86,9 @@ export default function App() {
 
     return () => {
       window.removeEventListener("navigate", handleNavigate as EventListener);
-      window.removeEventListener(
-        "dateSelect",
-        handleDateSelect as EventListener
-      );
+      window.removeEventListener("dateSelect", handleDateSelect as EventListener);
     };
-  }, []);
+  }, [navigate]);
 
   if (loggedInUser === undefined) {
     return (
@@ -152,52 +143,40 @@ export default function App() {
             `}>
               <div className="flex flex-col space-y-2 h-full">
                 <NavButton
-                  active={currentView === "dashboard"}
-                  onClick={() => {
-                    setCurrentView("dashboard");
-                    setSidebarOpen(false);
-                  }}>
+                  active={location.pathname === "/" || location.pathname === "/dashboard"}
+                  to="/dashboard"
+                  onClick={() => setSidebarOpen(false)}>
                   📊 DASHBOARD
                 </NavButton>
                 <NavButton
-                  active={currentView === "periods"}
-                  onClick={() => {
-                    setCurrentView("periods");
-                    setSidebarOpen(false);
-                  }}>
+                  active={location.pathname === "/periods"}
+                  to="/periods"
+                  onClick={() => setSidebarOpen(false)}>
                   📅 PERIOD VIEW
                 </NavButton>
                 <NavButton
-                  active={currentView === "period-manager"}
-                  onClick={() => {
-                    setCurrentView("period-manager");
-                    setSidebarOpen(false);
-                  }}>
+                  active={location.pathname === "/period-manager"}
+                  to="/period-manager"
+                  onClick={() => setSidebarOpen(false)}>
                   🗂️ MANAGE PERIODS
                 </NavButton>
                 <NavButton
-                  active={currentView === "daily"}
-                  onClick={() => {
-                    setCurrentView("daily");
-                    setSidebarOpen(false);
-                  }}>
+                  active={location.pathname === "/daily"}
+                  to="/daily"
+                  onClick={() => setSidebarOpen(false)}>
                   📋 DAILY VIEW
                 </NavButton>
                 <NavButton
-                  active={currentView === "settings"}
-                  onClick={() => {
-                    setCurrentView("settings");
-                    setSidebarOpen(false);
-                  }}>
+                  active={location.pathname === "/settings"}
+                  to="/settings"
+                  onClick={() => setSidebarOpen(false)}>
                   ⚙️ SETTINGS
                 </NavButton>
                 {userSettings?.isAdmin && (
                   <NavButton
-                    active={currentView === "admin"}
-                    onClick={() => {
-                      setCurrentView("admin");
-                      setSidebarOpen(false);
-                    }}>
+                    active={location.pathname === "/admin"}
+                    to="/admin"
+                    onClick={() => setSidebarOpen(false)}>
                     👑 ADMIN
                   </NavButton>
                 )}
@@ -213,19 +192,21 @@ export default function App() {
 
             {/* Main Content */}
             <main className="overflow-auto flex-1 p-4 sm:p-6 safe-area-inset-right safe-area-inset-bottom">
-              {currentView === "dashboard" && <Dashboard />}
-              {currentView === "periods" && <PeriodView />}
-              {currentView === "period-manager" && <PeriodManager />}
-              {currentView === "daily" && (
-                <DailyView
-                  selectedDate={selectedDate}
-                  onDateChange={setSelectedDate}
-                />
-              )}
-              {currentView === "settings" && <Settings />}
-              {currentView === "admin" && userSettings?.isAdmin && (
-                <AdminPortal />
-              )}
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/periods" element={<PeriodView />} />
+                <Route path="/periods/:periodId" element={<PeriodView />} />
+                <Route path="/period-manager" element={<PeriodManager />} />
+                <Route path="/daily" element={<DailyView />} />
+                <Route path="/daily/:date" element={<DailyView />} />
+                <Route path="/settings" element={<Settings />} />
+                {userSettings?.isAdmin && (
+                  <Route path="/admin" element={<AdminPortal />} />
+                )}
+                {/* Fallback route */}
+                <Route path="*" element={<Dashboard />} />
+              </Routes>
             </main>
           </div>
         </div>
@@ -263,21 +244,24 @@ export default function App() {
 function NavButton({
   children,
   active,
+  to,
   onClick,
 }: {
   children: React.ReactNode;
   active: boolean;
+  to: string;
   onClick: () => void;
 }) {
   return (
-    <button
+    <Link
+      to={to}
       onClick={onClick}
-      className={`w-full text-left p-3 font-bold border-4 border-black transition-colors shadow-brutal-sm text-sm sm:text-base ${
+      className={`w-full text-left p-3 font-bold border-4 border-black transition-colors shadow-brutal-sm text-sm sm:text-base block ${
         active
           ? "text-black bg-yellow"
           : "text-black bg-white hover:bg-gray-100"
       }`}>
       {children}
-    </button>
+    </Link>
   );
 }
