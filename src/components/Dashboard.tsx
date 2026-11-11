@@ -1,6 +1,7 @@
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { formatCurrency, formatDate } from "../utils/helpers";
+import { useNavigate } from "react-router-dom";
 import BarChart from "./BarChart";
 import PieChart from "./PieChart";
 import { useState } from "react";
@@ -8,15 +9,11 @@ import { useState } from "react";
 export default function Dashboard() {
   const userSettings = useQuery(api.settings.getUserSettings);
   const currentPeriod = useQuery(api.periods.getCurrentPeriod);
+  const navigate = useNavigate();
 
   const handleDateClick = (date: string) => {
     // Navigate to daily view with the selected date
-    const navigateEvent = new CustomEvent("navigate", { detail: "daily" });
-    window.dispatchEvent(navigateEvent);
-
-    // Set the selected date in App.tsx
-    const dateSelectEvent = new CustomEvent("dateSelect", { detail: date });
-    window.dispatchEvent(dateSelectEvent);
+    navigate(`/daily/${date}`);
   };
 
   const analytics = useQuery(
@@ -51,12 +48,7 @@ export default function Dashboard() {
               You need to create a period to start tracking your expenses.
             </p>
             <button
-              onClick={() => {
-                const event = new CustomEvent("navigate", {
-                  detail: "period-manager",
-                });
-                window.dispatchEvent(event);
-              }}
+              onClick={() => navigate('/period-manager')}
               className="px-6 py-3 text-lg font-bold text-black border-4 border-black transition-colors bg-yellow hover:bg-yellow-dark shadow-brutal-sm">
               CREATE A PERIOD
             </button>

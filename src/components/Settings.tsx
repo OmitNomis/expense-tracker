@@ -220,7 +220,7 @@ export default function Settings() {
             <label className="block mb-2 font-bold text-black">
               Primary Color
             </label>
-            <div className="grid grid-cols-6 gap-2 mb-4 sm:grid-cols-6 md:grid-cols-9">
+            <div className="grid grid-cols-3 gap-2 mb-4 sm:grid-cols-4 md:grid-cols-6">
               {THEME_COLORS.map((color) => (
                 <button
                   key={color}

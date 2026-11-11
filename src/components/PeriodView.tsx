@@ -1,6 +1,7 @@
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useState, useMemo } from "react";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { formatCurrency, formatDate } from "../utils/helpers";
 import BarChart from "./BarChart";
 import PieChart from "./PieChart";
@@ -8,16 +9,14 @@ import PieChart from "./PieChart";
 export default function PeriodView() {
   const userSettings = useQuery(api.settings.getUserSettings);
   const periods = useQuery(api.periods.getUserPeriods);
-  const [selectedPeriodId, setSelectedPeriodId] = useState<string>("");
+  const { periodId } = useParams();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const selectedPeriodId = periodId || searchParams.get('period') || '';
 
   const handleDateClick = (date: string) => {
     // Navigate to daily view with the selected date
-    const navigateEvent = new CustomEvent("navigate", { detail: "daily" });
-    window.dispatchEvent(navigateEvent);
-
-    // Set the selected date in App.tsx
-    const dateSelectEvent = new CustomEvent("dateSelect", { detail: date });
-    window.dispatchEvent(dateSelectEvent);
+    navigate(`/daily/${date}`);
   };
 
   // Get current period if no period is selected
@@ -80,12 +79,7 @@ export default function PeriodView() {
               periods.
             </p>
             <button
-              onClick={() => {
-                const event = new CustomEvent("navigate", {
-                  detail: "period-manager",
-                });
-                window.dispatchEvent(event);
-              }}
+              onClick={() => navigate('/period-manager')}
               className="px-6 py-3 text-lg font-bold text-black border-4 border-black transition-colors bg-yellow hover:bg-yellow-dark shadow-brutal-sm">
               CREATE YOUR FIRST PERIOD
             </button>
@@ -117,7 +111,14 @@ export default function PeriodView() {
         <div className="flex flex-col gap-4 items-start sm:flex-row sm:items-center">
           <select
             value={selectedPeriodId}
-            onChange={(e) => setSelectedPeriodId(e.target.value)}
+            onChange={(e) => {
+              const newPeriodId = e.target.value;
+              if (newPeriodId) {
+                navigate(`/periods/${newPeriodId}`);
+              } else {
+                navigate('/periods');
+              }
+            }}
             className="p-2 font-bold bg-white border-4 border-black transition-colors hover:bg-gray-50">
             <option value="">
               {currentPeriod ? "Current Period" : "Most Recent Period"}

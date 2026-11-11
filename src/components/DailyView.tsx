@@ -1,24 +1,20 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useState } from "react";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { formatCurrency, formatDate } from "../utils/helpers";
 import { toast } from "sonner";
 import EditExpenseModal from "./EditExpenseModal";
 
-interface DailyViewProps {
-  selectedDate: string;
-  onDateChange: (date: string) => void;
-}
-
-export default function DailyView({
-  selectedDate,
-  onDateChange,
-}: DailyViewProps) {
+export default function DailyView() {
+  const { date } = useParams();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const userSettings = useQuery(api.settings.getUserSettings);
   const [editingExpense, setEditingExpense] = useState<any>(null);
 
   // Use today's date if no date is selected
-  const currentDate = selectedDate || new Date().toISOString().split("T")[0];
+  const currentDate = date || searchParams.get('date') || new Date().toISOString().split("T")[0];
 
   const expenses = useQuery(api.expenses.getExpensesByDate, {
     date: currentDate,
@@ -59,7 +55,7 @@ export default function DailyView({
           <input
             type="date"
             value={currentDate}
-            onChange={(e) => onDateChange(e.target.value)}
+            onChange={(e) => navigate(`/daily/${e.target.value}`)}
             className="p-2 text-base font-bold bg-white border-4 border-black"
           />
 
