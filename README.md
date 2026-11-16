@@ -1,28 +1,43 @@
-# Expense Tracker App
-  
-This is a project built with [Chef](https://chef.convex.dev) using [Convex](https://convex.dev) as its backend.
- You can find docs about Chef with useful information like how to deploy to production [here](https://docs.convex.dev/chef).
-  
-  
+# Expense Tracker
+
+A mobile-first expense tracker that installs on your phone as a PWA. It tracks spending by
+budget period (for example, payday to payday) instead of by calendar month.
+
+## Features
+
+- **Budget periods**: start, close and reopen periods; new expenses go into the current one
+- **Daily and period views**: spending per day and per period, with bar and pie charts (no chart library)
+- **Custom categories**: add, rename and colour your own categories
+- **Settings**: currency (JPY, NPR, USD, EUR, GBP), the day your month starts, and a theme colour
+- **Accounts**: email and password sign-in with Convex Auth (passwords are hashed)
+- **Admin view**: an admin account can see total spending across users
+- **Installable**: web app manifest, icons and a service worker, with layout fixes for iOS Safari
+
+## Tech stack
+
+- React 19, TypeScript, Vite, Tailwind CSS, React Router
+- [Convex](https://convex.dev) for the database, server functions and auth
+
+## Running it locally
+
+```sh
+npm install
+npm run dev
+```
+
+`npm run dev` starts Vite and the Convex dev server together. On the first run, Convex asks you to log
+in and creates your own deployment. Then run `npx @convex-dev/auth` once to set up the auth keys.
+
 ## Project structure
-  
-The frontend code is in the `app` directory and is built with [Vite](https://vitejs.dev/).
-  
-The backend code is in the `convex` directory.
-  
-`npm run dev` will start the frontend and backend servers.
 
-## App authentication
+```
+convex/           backend: schema, queries and mutations (expenses, periods, settings, admin), auth
+src/components/   pages and UI: dashboard, daily and period views, period manager, settings, charts
+src/utils/        formatting and date helpers
+public/           manifest, service worker, icons
+```
 
-Chef apps use [Convex Auth](https://auth.convex.dev/) with Anonymous auth for easy sign in. You may wish to change this before deploying your app.
+## How it was built
 
-## Developing and deploying your app
-
-Check out the [Convex docs](https://docs.convex.dev/) for more information on how to develop with Convex.
-* If you're new to Convex, the [Overview](https://docs.convex.dev/understanding/) is a good place to start
-* Check out the [Hosting and Deployment](https://docs.convex.dev/production/) docs for how to deploy your app
-* Read the [Best Practices](https://docs.convex.dev/understanding/best-practices/) guide for tips on how to improve you app further
-
-## HTTP API
-
-User-defined http routes are defined in the `convex/router.ts` file. We split these routes into a separate file from `convex/http.ts` to allow us to prevent the LLM from modifying the authentication routes.
+The first version came from a [Convex Chef](https://chef.convex.dev) scaffold made with Claude.
+Budget periods, custom categories, theming, routing and the PWA/iOS fixes were added on top of it.
